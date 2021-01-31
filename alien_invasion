@@ -15,9 +15,7 @@ class AlienInvasion:
         pygame.init()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULSCREEN)
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_width = self.screen.get_rect().height
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Space Invaders")
 
         self.ship = Ship(self)
@@ -31,8 +29,8 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
 
             #Wyswietlanie ostatnio zmodyfikowanego ekranu
@@ -82,11 +80,35 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+    def _update_aliens(self):
+        """Uaktualnianie polozenia wszystkich obcych we flocie."""
+        self.aliens.update()
 
     def _create_fleet(self):
         """Utworzenie pelnej floty obcych."""
-        #Utworzenie obcego
+        #Utworzenie obcego i ustalenie liczby obcych, ktorzy zmieszcza sie w rzedzie
         alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        avalaible_space_x = self.settings.screen_width - (alien_width)
+        number_aliens_x = avalaible_space_x // (alien_width)
+
+        #Ustalenie ile rzedow obcych zmiesci sie na ekranie
+        ship_height = self.ship.rect.height
+        avalaible_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        number_rows = avalaible_space_y // (2 * alien_height)
+
+        #Utworzenie pelnej floty obcych
+        for row_number in range(number_rows):
+            for alien_number in range (number_aliens_x):
+                self._create_alien(alien_number, row_number)
+
+    def _create_alien(self, alien_number, row_number):
+        """Utworzenie obcego i umieszczenie go w rzedzie."""
+        alien = Alien(self)
+        alien_width, alien_height = alien.rect.size
+        alien.x = alien_width + 2 * alien_width * alien_number
+        alien.rect.x = alien.x
+        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
 
     def _update_screen(self):
@@ -103,4 +125,5 @@ if __name__ == '__main__':
     #Utworzenie egzemplarza gry i jej uruchomienie
     ai = AlienInvasion()
     ai.run_game()
+
 
