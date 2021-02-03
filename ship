@@ -11,7 +11,7 @@ class Ship:
         self.screen_rect = ai_game.screen.get_rect()
 
         #Wczytanie obrazu statku kosmicznego i pobranie jego prostokata
-        self.image = pygame.image.load('images/ship.bmp')
+        self.image = pygame.image.load('images/ship.jpg')
         self.rect = self.image.get_rect()
 
         #Kazdy nowy statek kosmiczny pojawia sie na dole ekranu
@@ -38,3 +38,8 @@ class Ship:
     def blitme(self):
         """Wyswietlenie statku kosmicznego w jego aktualnym polozeniu."""
         self.screen.blit(self.image, self.rect)
+
+    def center_ship(self):
+        """Umieszczenie statku na srodku przy dolnej krawedzi ekranu."""
+        self.rect.midbottom = self.screen_rect.midbottom
+        self.x = float(self.rect.x)
